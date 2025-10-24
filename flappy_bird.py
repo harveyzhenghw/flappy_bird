@@ -32,7 +32,10 @@ def move_pipes(pipe_list):
         pass
     return pipe_list
 
-
+def draw_pipes(pipe_list):
+    for pipe in pipe_list:
+        screen_surface.blit(pipe_surface, pipe)
+        pass
 
 bg_surface = pygame.image.load("./assests/sprites/background-day.png")
 bg_surface = pygame.transform.scale2x(bg_surface)
@@ -81,6 +84,7 @@ while True:
 
     #pipes
     pipe_list = move_pipes(pipe_list)
+    draw_pipes(pipe_list)
     
     #floor
     floor_x_pos -= 1
