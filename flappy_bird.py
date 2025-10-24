@@ -26,6 +26,13 @@ def create_pipe():
 gravity = 0.1
 bird_movement = 0
 
+def move_pipes(pipe_list):
+    for pipe in pipe_list:
+        pipe.centerx -= 5
+        pass
+    return pipe_list
+
+
 
 bg_surface = pygame.image.load("./assests/sprites/background-day.png")
 bg_surface = pygame.transform.scale2x(bg_surface)
@@ -65,15 +72,17 @@ while True:
             pipe_list.append(create_pipe())
             print(pipe_list)
         pass
+    #screen
     screen_surface.blit(bg_surface, (0, 0))
-
+    #bird
     bird_movement += gravity
     bird_rect.centery += bird_movement
     screen_surface.blit(bird_surface,bird_rect)
 
-
+    #pipes
+    pipe_list = move_pipes(pipe_list)
     
-
+    #floor
     floor_x_pos -= 1
     draw_floor()
     if floor_x_pos <= -576:
