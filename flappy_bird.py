@@ -20,9 +20,10 @@ def draw_floor():
 
 
 def create_pipe():
-    random_pipe__position = random.choice(pipe_height)
-    new_pipe = pipe_surface.get_rect(midtop = (700, random_pipe__position))
-    return new_pipe
+    random_pipe_position = random.choice(pipe_height)
+    bottom_pipe = pipe_surface.get_rect(midtop = (700, random_pipe_position))
+    top_pipe = pipe_surface.get_rect(midbottom = (700, random_pipe_position-250))
+    return bottom_pipe, top_pipe
 #variables
 gravity = 0.1
 bird_movement = 0
@@ -35,8 +36,12 @@ def move_pipes(pipe_list):
 
 def draw_pipes(pipe_list):
     for pipe in pipe_list:
-        screen_surface.blit(pipe_surface, pipe)
-        pass
+        
+        if pipe.bottom >= 900:
+            screen_surface.blit(pipe_surface, pipe)
+        else:
+            flip_pipe = pygame.transform.flip(pipe_surface, False, True)
+            screen_surface.blit(flip_pipe, pipe)
 
 bg_surface = pygame.image.load("./assests/sprites/background-day.png")
 bg_surface = pygame.transform.scale2x(bg_surface)
@@ -74,7 +79,7 @@ while True:
                 pass
             pass
         if event.type == SPAWN_PIPE:
-            pipe_list.append(create_pipe())
+            pipe_list.extend(create_pipe())
             print(pipe_list)
         pass
     #screen
