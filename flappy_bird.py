@@ -1,6 +1,6 @@
 # INITIALIZE PYGAME
 # # Import the pygame module
-import pygame,sys
+import pygame,sys, random
 # Initialize module
 pygame.init()
 pygame.display.set_caption("Flappy Bird by Harvey")
@@ -20,7 +20,8 @@ def draw_floor():
 
 
 def create_pipe():
-    new_pipe = pipe_surface.get_rect(midtop = (300, 512))
+    random_pipe__position = random.choice(pipe_height)
+    new_pipe = pipe_surface.get_rect(midtop = (700, random_pipe__position))
     return new_pipe
 #variables
 gravity = 0.1
@@ -53,6 +54,7 @@ bird_rect = bird_surface.get_rect(center = (200,200))
 pipe_surface = pygame.image.load("./assests/sprites/pipe-green.png")
 pipe_surface = pygame.transform.scale2x(pipe_surface)
 pipe_list = []
+pipe_height = [300,500,700]
 SPAWN_PIPE = pygame.USEREVENT
 pygame.time.set_timer(SPAWN_PIPE, 1500)
 # GAME LOOP
