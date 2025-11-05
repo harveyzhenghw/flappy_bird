@@ -42,7 +42,12 @@ def draw_pipes(pipe_list):
         else:
             flip_pipe = pygame.transform.flip(pipe_surface, False, True)
             screen_surface.blit(flip_pipe, pipe)
-
+def check_collision(pipe_list):
+    for pipe in pipe_list:
+        if bird_rect.colliderect(pipe):
+            print("game over")
+        if bird_rect.top <= -50 or bird_rect.top >=850:
+            print("game over")
 bg_surface = pygame.image.load("./assests/sprites/background-day.png")
 bg_surface = pygame.transform.scale2x(bg_surface)
 
@@ -88,7 +93,7 @@ while True:
     bird_movement += gravity
     bird_rect.centery += bird_movement
     screen_surface.blit(bird_surface,bird_rect)
-
+    check_collision(pipe_list)
     #pipes
     pipe_list = move_pipes(pipe_list)
     draw_pipes(pipe_list)
