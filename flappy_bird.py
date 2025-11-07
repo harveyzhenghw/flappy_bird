@@ -24,9 +24,7 @@ def create_pipe():
     bottom_pipe = pipe_surface.get_rect(midtop = (700, random_pipe_position))
     top_pipe = pipe_surface.get_rect(midbottom = (700, random_pipe_position-250))
     return bottom_pipe, top_pipe
-#variables
-gravity = 0.1
-bird_movement = 0
+
 
 def move_pipes(pipe_list):
     for pipe in pipe_list:
@@ -46,8 +44,25 @@ def check_collision(pipe_list):
     for pipe in pipe_list:
         if bird_rect.colliderect(pipe):
             print("game over")
-        if bird_rect.top <= -50 or bird_rect.top >=850:
-            print("game over")
+            return False
+    if bird_rect.top <= -50 or bird_rect.top >=850:
+        print("game over")
+        return False
+    return True
+
+def rotate_bird(bird):
+    new_bird = pygame.transform.rotozoom(bird,-bird_movement*5, 1)
+    return new_bird
+
+def bird_animation():
+    new_bird = bird_frames[bird_index]
+    new_bird_rect = new_bird.get_rect(center = (120, bird_rect.centery))
+    return new_bird, new_bird_rect
+#variables
+gravity = 0.15
+bird_movement = 0
+game_active = True
+
 bg_surface = pygame.image.load("./assests/sprites/background-day.png")
 bg_surface = pygame.transform.scale2x(bg_surface)
 
@@ -57,10 +72,27 @@ floor = pygame.image.load("./assests/sprites/base.png")
 floor = pygame.transform.scale2x(floor)
 floor_x_pos = 0
 #bird
-bird_surface = pygame.image.load("./assests/sprites/redbird-midflap.png")
+'''bird_surface = pygame.image.load("./assests/sprites/redbird-midflap.png")
 bird_surface = pygame.transform.scale2x(bird_surface)
-bird_rect = bird_surface.get_rect(center = (200,200))
+bird_rect = bird_surface.get_rect(center = (200,200))'''
+bird_down_flap = pygame.transform.scale2x(pygame.image.load("./assests/sprites/redbird-downflap.png").convert_alpha())
+
+bird_mid_flap = pygame.transform.scale2x(pygame.image.load("./assests/sprites/redbird-midflap.png").convert_alpha())
+
+bird_up_flap = pygame.transform.scale2x(pygame.image.load("./assests/sprites/redbird-upflap.png").convert_alpha())
+
+bird_frames = [bird_down_flap,bird_mid_flap,bird_up_flap]
+bird_index = 0
+bird_surface = bird_frames[bird_index]
+bird_rect = bird_surface.get_rect(center = (120,200))
+
+BIRDFLAP = pygame.USEREVENT+1
+pygame.time.set_timer(BIRDFLAP,200)
+
+
+
 #pipe
+
 pipe_surface = pygame.image.load("./assests/sprites/pipe-green.png")
 pipe_surface = pygame.transform.scale2x(pipe_surface)
 pipe_list = []
@@ -78,25 +110,45 @@ while True:
             sys.exit()
             pass
         if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_SPACE:
+            if event.key == pygame.K_SPACE and game_active == True:
                 bird_movement = 0
                 bird_movement -= 5
                 pass
             pass
+
+            if event.key == pygame.K_SPACE and game_active == False:
+                game_active = True
+
+                pipe_list.clear()
+                bird_rect.center = (120,200)
+                bird_movement = 0   
+
+        if event.type == BIRDFLAP:
+            if bird_index <2:
+                bird_index += 1
+            else:
+                bird_index = 0
+
+            bird_surface, bird_rect = bird_animation()
+        
+        
+                
         if event.type == SPAWN_PIPE:
             pipe_list.extend(create_pipe())
             print(pipe_list)
         pass
     #screen
     screen_surface.blit(bg_surface, (0, 0))
-    #bird
-    bird_movement += gravity
-    bird_rect.centery += bird_movement
-    screen_surface.blit(bird_surface,bird_rect)
-    check_collision(pipe_list)
-    #pipes
-    pipe_list = move_pipes(pipe_list)
-    draw_pipes(pipe_list)
+    if game_active:
+        #bird
+        bird_movement += gravity
+        rotated_bird = rotate_bird(bird_surface)
+        bird_rect.centery += bird_movement
+        screen_surface.blit(rotated_bird,bird_rect)
+        game_active = check_collision(pipe_list)
+        #pipes
+        pipe_list = move_pipes(pipe_list)
+        draw_pipes(pipe_list)
     
     #floor
     floor_x_pos -= 1
