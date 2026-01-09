@@ -112,7 +112,7 @@ while True:
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_SPACE and game_active == True:
                 bird_movement = 0
-                bird_movement -= 5
+                bird_movement -= 5      
                 pass
             pass
 
